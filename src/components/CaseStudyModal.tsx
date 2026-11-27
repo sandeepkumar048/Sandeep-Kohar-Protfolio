@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { PortfolioProject } from '../data/portfolioData';
+import { getNextSlideIndex, getProjectGalleryItems } from '../utils/portfolio';
 
 interface CaseStudyModalProps {
   project: PortfolioProject | null;
+  initialGalleryIndex?: number;
   onClose: () => void;
   onNavigate: (direction: 'prev' | 'next') => void;
   onStartProject: (scope: string) => void;
@@ -11,10 +13,17 @@ interface CaseStudyModalProps {
 
 export function CaseStudyModal({
   project,
+  initialGalleryIndex = 0,
   onClose,
   onNavigate,
   onStartProject,
 }: CaseStudyModalProps) {
+  const [galleryIndex, setGalleryIndex] = useState(initialGalleryIndex);
+
+  useEffect(() => {
+    setGalleryIndex(initialGalleryIndex);
+  }, [project?.id, initialGalleryIndex]);
+
   useEffect(() => {
     if (!project) {
       return;
@@ -40,6 +49,10 @@ export function CaseStudyModal({
   if (!project) {
     return null;
   }
+
+  const galleryItems = getProjectGalleryItems(project);
+  const safeGalleryIndex = galleryIndex % galleryItems.length;
+  const activeArtwork = galleryItems[safeGalleryIndex];
 
   return (
     <div
@@ -80,14 +93,94 @@ export function CaseStudyModal({
 
         <div className="p-6 sm:p-8">
           {/* High-Resolution Preview Frame */}
-          <div className="aspect-[16/10] w-full overflow-hidden rounded-[20px] border border-neutral-200 bg-white">
+          <div className="aspect-[16/10] w-full overflow-hidden rounded-[20px] border border-neutral-200 bg-[#F5F7FA]">
             <img
-              src={project.image}
-              alt={project.imageAlt}
+              src={activeArtwork.src}
+              alt={activeArtwork.alt}
               referrerPolicy="no-referrer"
               className={`h-full w-full ${project.imageCropClass ?? 'object-cover'}`}
             />
           </div>
+
+          {galleryItems.length > 1 && (
+            <div className="mt-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 text-[13px]">
+                  <span className="font-serif italic text-[#737373] tabular-nums">
+                    Design {String(safeGalleryIndex + 1).padStart(2, '0')} /{' '}
+                    {String(galleryItems.length).padStart(2, '0')}
+                  </span>
+                  <span className="text-neutral-300" aria-hidden="true">
+                    ·
+                  </span>
+                  <span
+                    data-testid="modal-gallery-label"
+                    className="font-medium text-[#111111]"
+                  >
+                    {activeArtwork.label}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setGalleryIndex((prev) =>
+                        getNextSlideIndex(prev, galleryItems.length, 'prev')
+                      )
+                    }
+                    aria-label="Previous campaign design"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors hover:border-[#111111] hover:bg-[#111111] hover:text-white cursor-pointer"
+                  >
+                    <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setGalleryIndex((prev) =>
+                        getNextSlideIndex(prev, galleryItems.length, 'next')
+                      )
+                    }
+                    aria-label="Next campaign design"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors hover:border-[#111111] hover:bg-[#111111] hover:text-white cursor-pointer"
+                  >
+                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+
+              <div
+                role="group"
+                aria-label="Select campaign design in modal"
+                className="mt-3 grid grid-cols-5 gap-2.5"
+              >
+                {galleryItems.map((item, idx) => {
+                  const isActive = idx === safeGalleryIndex;
+                  return (
+                    <button
+                      key={item.src}
+                      type="button"
+                      aria-label={`Inspect modal design ${idx + 1} of ${galleryItems.length}: ${item.label}`}
+                      aria-pressed={isActive}
+                      onClick={() => setGalleryIndex(idx)}
+                      className={`group relative aspect-[4/3] overflow-hidden rounded-[12px] border bg-[#F5F7FA] p-1 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] cursor-pointer ${
+                        isActive
+                          ? 'border-[#111111] ring-2 ring-[#D9FA7A]'
+                          : 'border-neutral-200 opacity-75 hover:border-neutral-400 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={item.src}
+                        alt={item.label}
+                        referrerPolicy="no-referrer"
+                        className="h-full w-full rounded-[8px] object-contain"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Summary & Meta */}
           <div className="mt-7 grid grid-cols-1 gap-6 md:grid-cols-[1.5fr_1fr]">

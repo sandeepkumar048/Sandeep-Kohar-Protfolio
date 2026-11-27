@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Download, Linkedin, Menu, X } from 'lucide-react';
+import { Check, Download, Facebook, Instagram, Linkedin, Menu, X } from 'lucide-react';
 import { PERSONAL_PROFILE } from '../data/portfolioData';
 
 interface NavbarProps {
@@ -76,6 +76,26 @@ export function Navbar({
           </a>
 
           <a
+            href={PERSONAL_PROFILE.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Sandeep Kohar on Instagram"
+            className="hidden md:inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors duration-150 hover:border-[#111111] hover:bg-[#111111] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+          >
+            <Instagram className="h-4 w-4" aria-hidden="true" />
+          </a>
+
+          <a
+            href={PERSONAL_PROFILE.facebookUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Sandeep Kohar on Facebook"
+            className="hidden md:inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors duration-150 hover:border-[#111111] hover:bg-[#111111] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+          >
+            <Facebook className="h-4 w-4" aria-hidden="true" />
+          </a>
+
+          <a
             href="#contact"
             className="hidden md:inline-flex items-center justify-center rounded-full bg-[#111111] px-5 py-2.5 text-[13px] font-medium text-white whitespace-nowrap shrink-0 transition-transform duration-150 hover:bg-[#262626] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
           >
@@ -120,6 +140,26 @@ export function Navbar({
             >
               <Linkedin className="h-4 w-4" aria-hidden="true" />
               <span>LinkedIn</span>
+            </a>
+            <a
+              href={PERSONAL_PROFILE.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex min-h-[44px] items-center gap-2 text-[15px] font-medium text-[#111111] hover:text-[#525252]"
+            >
+              <Instagram className="h-4 w-4" aria-hidden="true" />
+              <span>Instagram</span>
+            </a>
+            <a
+              href={PERSONAL_PROFILE.facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex min-h-[44px] items-center gap-2 text-[15px] font-medium text-[#111111] hover:text-[#525252]"
+            >
+              <Facebook className="h-4 w-4" aria-hidden="true" />
+              <span>Facebook</span>
             </a>
             <button
               type="button"

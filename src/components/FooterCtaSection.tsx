@@ -3,6 +3,8 @@ import {
   CheckCircle2,
   Clock,
   Download,
+  Facebook,
+  Instagram,
   Linkedin,
   Mail,
   MapPin,
@@ -339,6 +341,24 @@ export function FooterCtaSection({
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors hover:border-[#111111] hover:bg-[#111111] hover:text-[#D9FA7A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
                   >
                     <Linkedin className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                  <a
+                    href={PERSONAL_PROFILE.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow Sandeep Kohar on Instagram"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors hover:border-[#111111] hover:bg-[#111111] hover:text-[#D9FA7A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+                  >
+                    <Instagram className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                  <a
+                    href={PERSONAL_PROFILE.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow Sandeep Kohar on Facebook"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-[#111111] transition-colors hover:border-[#111111] hover:bg-[#111111] hover:text-[#D9FA7A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+                  >
+                    <Facebook className="h-4 w-4" aria-hidden="true" />
                   </a>
                   <a
                     href={`mailto:${PERSONAL_PROFILE.email}`}

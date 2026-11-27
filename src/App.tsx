@@ -10,6 +10,7 @@ import { HighlightsSection } from './components/HighlightsSection';
 import { LinkedInPostsSection } from './components/LinkedInPostsSection';
 import { Navbar } from './components/Navbar';
 import { PhilosophySection } from './components/PhilosophySection';
+import { ProjectCtaBannerSection } from './components/ProjectCtaBannerSection';
 import { QualificationSection } from './components/QualificationSection';
 import { ShowcaseReelSection } from './components/ShowcaseReelSection';
 import { SkillsSection } from './components/SkillsSection';
@@ -26,6 +27,7 @@ export default function App() {
   const [webFilter, setWebFilter] = useState<ProjectCategory>('All');
   const [graphicsFilter, setGraphicsFilter] = useState<ProjectCategory>('All');
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   const [contactOpen, setContactOpen] = useState(false);
   const [contactScope, setContactScope] = useState<string | undefined>(undefined);
   const [submittedInquiries, setSubmittedInquiries] = useState<SubmittedInquiry[]>([]);
@@ -34,6 +36,11 @@ export default function App() {
 
   const activeProject =
     PORTFOLIO_PROJECTS.find((item) => item.id === activeProjectId) ?? null;
+
+  const handleSelectProject = (projectId: string, galleryIndex = 0) => {
+    setActiveProjectId(projectId);
+    setActiveGalleryIndex(galleryIndex);
+  };
 
   const handleOpenContact = (scope?: string) => {
     setContactScope(scope);
@@ -69,6 +76,7 @@ export default function App() {
     const nextId = getAdjacentProjectId(PORTFOLIO_PROJECTS, activeProjectId, direction);
     if (nextId) {
       setActiveProjectId(nextId);
+      setActiveGalleryIndex(0);
     }
   };
 
@@ -97,7 +105,7 @@ export default function App() {
 
         <ShowcaseReelSection
           projects={PORTFOLIO_PROJECTS.slice(0, 4)}
-          onSelectProject={(id) => setActiveProjectId(id)}
+          onSelectProject={(id) => handleSelectProject(id, 0)}
         />
 
         <PhilosophySection onFilterByCategory={handleFilterFromCapability} />
@@ -111,7 +119,7 @@ export default function App() {
             projects={PORTFOLIO_PROJECTS}
             activeFilter={webFilter}
             onChangeFilter={setWebFilter}
-            onSelectProject={(id) => setActiveProjectId(id)}
+            onSelectProject={(id) => handleSelectProject(id, 0)}
             onStartWebProject={() => handleOpenContact('Web Development')}
           />
 
@@ -119,7 +127,7 @@ export default function App() {
             projects={PORTFOLIO_PROJECTS}
             activeFilter={graphicsFilter}
             onChangeFilter={setGraphicsFilter}
-            onSelectProject={(id) => setActiveProjectId(id)}
+            onSelectProject={handleSelectProject}
             onStartGraphicsProject={() => handleOpenContact('Graphic Design')}
           />
         </div>
@@ -127,6 +135,10 @@ export default function App() {
         <HighlightsSection />
 
         <LinkedInPostsSection />
+
+        <ProjectCtaBannerSection
+          onContactClick={() => handleOpenContact('Web Development & Graphic Design')}
+        />
       </main>
 
       <FooterCtaSection
@@ -138,6 +150,7 @@ export default function App() {
 
       <CaseStudyModal
         project={activeProject}
+        initialGalleryIndex={activeGalleryIndex}
         onClose={() => setActiveProjectId(null)}
         onNavigate={handleNavigateProject}
         onStartProject={handleStartSimilarProject}

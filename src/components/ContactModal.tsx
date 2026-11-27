@@ -134,6 +134,24 @@ export function ContactModal({
                 className="font-medium text-[#111111] underline underline-offset-2 hover:opacity-75"
               >
                 LinkedIn
+              </a>{' '}
+              ·{' '}
+              <a
+                href={PERSONAL_PROFILE.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#111111] underline underline-offset-2 hover:opacity-75"
+              >
+                Instagram
+              </a>{' '}
+              ·{' '}
+              <a
+                href={PERSONAL_PROFILE.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#111111] underline underline-offset-2 hover:opacity-75"
+              >
+                Facebook
               </a>
             </p>
           </div>

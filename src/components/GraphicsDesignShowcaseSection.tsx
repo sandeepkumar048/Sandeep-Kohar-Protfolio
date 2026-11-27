@@ -5,13 +5,17 @@ import {
   type PortfolioProject,
   type ProjectCategory,
 } from '../data/portfolioData';
-import { filterProjectsByShowcase, getNextSlideIndex } from '../utils/portfolio';
+import {
+  filterProjectsByShowcase,
+  getNextSlideIndex,
+  getProjectGalleryItems,
+} from '../utils/portfolio';
 
 interface GraphicsDesignShowcaseSectionProps {
   projects: PortfolioProject[];
   activeFilter: ProjectCategory;
   onChangeFilter: (category: ProjectCategory) => void;
-  onSelectProject: (projectId: string) => void;
+  onSelectProject: (projectId: string, galleryIndex?: number) => void;
   onStartGraphicsProject: () => void;
 }
 
@@ -23,6 +27,9 @@ export function GraphicsDesignShowcaseSection({
   onStartGraphicsProject,
 }: GraphicsDesignShowcaseSectionProps) {
   const [slideIndex, setSlideIndex] = useState(0);
+  const [activeGalleryByProject, setActiveGalleryByProject] = useState<
+    Record<string, number>
+  >({});
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const touchStartX = useRef<number | null>(null);
 
@@ -153,7 +160,12 @@ export function GraphicsDesignShowcaseSection({
             }
           >
             {graphicsProjects.map((project, idx) => {
-              const hasFailed = Boolean(failedImages[project.id]);
+              const galleryItems = getProjectGalleryItems(project);
+              const activeGalleryIdx =
+                (activeGalleryByProject[project.id] ?? 0) % galleryItems.length;
+              const activeArtwork = galleryItems[activeGalleryIdx];
+              const imageKey = `${project.id}:${activeArtwork.src}`;
+              const hasFailed = Boolean(failedImages[imageKey]);
               const isCurrent = idx === safeSlideIndex;
               const plateNumber = String(idx + 1).padStart(2, '0');
 
@@ -170,54 +182,114 @@ export function GraphicsDesignShowcaseSection({
                     }`}
                   >
                     <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1.25fr_1fr] lg:gap-8">
-                      {/* High-Resolution Gallery Plate */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!isCurrent) {
-                            setSlideIndex(idx);
-                          } else {
-                            onSelectProject(project.id);
+                      {/* High-Resolution Gallery Plate + Optional Multi-Design Switcher */}
+                      <div className="flex flex-col">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!isCurrent) {
+                              setSlideIndex(idx);
+                            } else {
+                              onSelectProject(project.id, activeGalleryIdx);
+                            }
+                          }}
+                          aria-label={
+                            isCurrent
+                              ? `Open graphics case study for ${project.title}`
+                              : `Focus slide ${plateNumber}: ${project.title}`
                           }
-                        }}
-                        aria-label={
-                          isCurrent
-                            ? `Open graphics case study for ${project.title}`
-                            : `Focus slide ${plateNumber}: ${project.title}`
-                        }
-                        className="group relative aspect-[4/3] w-full overflow-hidden rounded-[18px] border border-neutral-200/75 bg-white text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#111111] cursor-pointer"
-                      >
-                        {hasFailed ? (
-                          <div className="flex h-full w-full flex-col items-center justify-center bg-neutral-100 p-6 text-center">
-                            <Layers className="h-6 w-6 text-neutral-400" />
-                            <span className="mt-2 text-sm font-medium text-[#111111]">
-                              {project.title}
+                          className="group relative aspect-[4/3] w-full overflow-hidden rounded-[18px] border border-neutral-200/75 bg-[#F5F7FA] text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#111111] cursor-pointer"
+                        >
+                          {hasFailed ? (
+                            <div className="flex h-full w-full flex-col items-center justify-center bg-neutral-100 p-6 text-center">
+                              <Layers className="h-6 w-6 text-neutral-400" />
+                              <span className="mt-2 text-sm font-medium text-[#111111]">
+                                {activeArtwork.label}
+                              </span>
+                            </div>
+                          ) : (
+                            <img
+                              src={activeArtwork.src}
+                              alt={activeArtwork.alt}
+                              referrerPolicy="no-referrer"
+                              onError={() =>
+                                setFailedImages((prev) => ({
+                                  ...prev,
+                                  [imageKey]: true,
+                                }))
+                              }
+                              className={`h-full w-full transition-transform duration-300 group-hover:scale-[1.02] ${project.imageCropClass ?? 'object-cover'}`}
+                            />
+                          )}
+                          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/75 via-black/30 to-transparent px-4 pt-10 pb-3.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+                            <span className="text-[12px] font-medium text-white">
+                              {galleryItems.length > 1
+                                ? `${project.client} · ${activeArtwork.label}`
+                                : project.client}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[12px] font-medium text-[#D9FA7A]">
+                              <span>{isCurrent ? 'Inspect Artwork' : 'View Slide'}</span>
+                              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                             </span>
                           </div>
-                        ) : (
-                          <img
-                            src={project.image}
-                            alt={project.imageAlt}
-                            referrerPolicy="no-referrer"
-                            onError={() =>
-                              setFailedImages((prev) => ({
-                                ...prev,
-                                [project.id]: true,
-                              }))
-                            }
-                            className={`h-full w-full transition-transform duration-300 group-hover:scale-[1.03] ${project.imageCropClass ?? 'object-cover'}`}
-                          />
+                        </button>
+
+                        {galleryItems.length > 1 && (
+                          <div className="mt-3">
+                            <div className="flex items-center justify-between gap-2 text-[12px] text-[#525252]">
+                              <span
+                                data-testid={`gallery-active-label-${project.id}`}
+                                className="truncate font-medium text-[#111111]"
+                              >
+                                {activeArtwork.label}
+                              </span>
+                              <span className="shrink-0 font-serif italic text-[#737373] tabular-nums">
+                                {String(activeGalleryIdx + 1).padStart(2, '0')} /{' '}
+                                {String(galleryItems.length).padStart(2, '0')} designs
+                              </span>
+                            </div>
+
+                            <div
+                              role="group"
+                              aria-label={`${project.title} design gallery`}
+                              className="mt-2 grid grid-cols-5 gap-2"
+                            >
+                              {galleryItems.map((item, gIdx) => {
+                                const isSelected = gIdx === activeGalleryIdx;
+                                return (
+                                  <button
+                                    key={item.src}
+                                    type="button"
+                                    aria-label={`View design ${gIdx + 1} of ${galleryItems.length}: ${item.label}`}
+                                    aria-pressed={isSelected}
+                                    onClick={() => {
+                                      if (!isCurrent) {
+                                        setSlideIndex(idx);
+                                      }
+                                      setActiveGalleryByProject((prev) => ({
+                                        ...prev,
+                                        [project.id]: gIdx,
+                                      }));
+                                    }}
+                                    className={`group/thumb relative aspect-[4/3] overflow-hidden rounded-[10px] border bg-[#F5F7FA] p-0.5 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] cursor-pointer ${
+                                      isSelected
+                                        ? 'border-[#111111] ring-2 ring-[#D9FA7A]'
+                                        : 'border-neutral-200/90 opacity-75 hover:border-neutral-400 hover:opacity-100'
+                                    }`}
+                                  >
+                                    <img
+                                      src={item.src}
+                                      alt={item.label}
+                                      referrerPolicy="no-referrer"
+                                      className="h-full w-full rounded-[7px] object-contain"
+                                    />
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
                         )}
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/75 via-black/30 to-transparent px-4 pt-10 pb-3.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-                          <span className="text-[12px] font-medium text-white">
-                            {project.client}
-                          </span>
-                          <span className="inline-flex items-center gap-1 text-[12px] font-medium text-[#D9FA7A]">
-                            <span>{isCurrent ? 'Inspect Artwork' : 'View Slide'}</span>
-                            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-                          </span>
-                        </div>
-                      </button>
+                      </div>
 
                       {/* Spacious Uncramped Exhibition Details (Zero Truncation) */}
                       <div className="flex flex-col justify-between py-1 lg:py-3">
@@ -261,7 +333,7 @@ export function GraphicsDesignShowcaseSection({
                           <div className="mt-6 flex flex-wrap items-center gap-3">
                             <button
                               type="button"
-                              onClick={() => onSelectProject(project.id)}
+                              onClick={() => onSelectProject(project.id, activeGalleryIdx)}
                               className="inline-flex min-h-[42px] items-center gap-2 rounded-full bg-[#111111] px-5 py-2 text-[13px] font-medium text-white whitespace-nowrap transition-colors duration-150 hover:bg-[#262626] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] cursor-pointer"
                             >
                               <span>Inspect Artwork &amp; Case</span>
@@ -292,7 +364,13 @@ export function GraphicsDesignShowcaseSection({
           role="tablist"
           aria-label="Select graphics design slide"
           className={`mt-7 grid grid-cols-2 gap-3 ${
-            totalSlides <= 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-4'
+            totalSlides <= 2
+              ? 'sm:grid-cols-2'
+              : totalSlides === 3
+                ? 'sm:grid-cols-3'
+                : totalSlides === 5
+                  ? 'sm:grid-cols-3 lg:grid-cols-5'
+                  : 'sm:grid-cols-4'
           }`}
         >
           {graphicsProjects.map((project, idx) => {

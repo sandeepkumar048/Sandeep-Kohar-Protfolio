@@ -7,6 +7,7 @@ import {
   filterProjectsByShowcase,
   getAdjacentProjectId,
   getNextSlideIndex,
+  getProjectGalleryItems,
   paginateTestimonials,
   shouldShowBackToTop,
   validateContactMessageForm,
@@ -31,7 +32,7 @@ import {
 
 test('filterProjectsByCategory returns all projects for All and filters Web Dev & Graphics categories', () => {
   const all = filterProjectsByCategory(PORTFOLIO_PROJECTS, 'All');
-  assert.equal(all.length, 8);
+  assert.equal(all.length, 9);
 
   const webDev = filterProjectsByCategory(PORTFOLIO_PROJECTS, 'Web Dev');
   assert.equal(webDev.length, 2);
@@ -39,9 +40,11 @@ test('filterProjectsByCategory returns all projects for All and filters Web Dev 
   assert.equal(webDev[0].image, '/assets/aistudio/image_5b9c49ca.png');
 
   const brandIdentity = filterProjectsByCategory(PORTFOLIO_PROJECTS, 'Brand Identity');
-  assert.equal(brandIdentity.length, 2);
-  assert.equal(brandIdentity[0].id, 'syneo-labs-campaign');
-  assert.equal(brandIdentity[0].image, '/assets/aistudio/every_syneo_48d331e7.png');
+  assert.equal(brandIdentity.length, 3);
+  assert.equal(brandIdentity[0].id, 'elab-nepal-campaign');
+  assert.equal(brandIdentity[0].image, '/assets/aistudio/elab_web_65653572.jpg');
+  assert.equal(brandIdentity[1].id, 'syneo-labs-campaign');
+  assert.equal(brandIdentity[1].image, '/assets/aistudio/every_syneo_48d331e7.png');
 });
 
 test('filterProjectsByShowcase separates Web Design and Graphics Design tracks cleanly', () => {
@@ -54,12 +57,35 @@ test('filterProjectsByShowcase separates Web Design and Graphics Design tracks c
   assert.ok(fullStackWeb.every((p) => p.category === 'Full-Stack'));
 
   const allGraphics = filterProjectsByShowcase(PORTFOLIO_PROJECTS, 'graphics', 'All');
-  assert.equal(allGraphics.length, 4);
+  assert.equal(allGraphics.length, 5);
   assert.ok(allGraphics.every((p) => p.showcase === 'graphics'));
 
   const printGraphics = filterProjectsByShowcase(PORTFOLIO_PROJECTS, 'graphics', 'Print & Visual');
   assert.equal(printGraphics.length, 2);
   assert.ok(printGraphics.every((p) => p.category === 'Print & Visual'));
+});
+
+test('getProjectGalleryItems exposes all 5 eLab Nepal designs and falls back cleanly for single-image projects', () => {
+  const elab = PORTFOLIO_PROJECTS.find((p) => p.id === 'elab-nepal-campaign');
+  assert.ok(elab);
+  const elabItems = getProjectGalleryItems(elab);
+  assert.equal(elabItems.length, 5);
+  assert.deepEqual(
+    elabItems.map((item) => item.src),
+    [
+      '/assets/aistudio/elab_web_65653572.jpg',
+      '/assets/aistudio/Health_Nw_78a9623d.jpg',
+      '/assets/aistudio/e-lb_c0197248.png',
+      '/assets/aistudio/care_7af41d08.jpg',
+      '/assets/aistudio/Ready_wherever_17fa5dbb.png',
+    ]
+  );
+
+  const syneo = PORTFOLIO_PROJECTS.find((p) => p.id === 'syneo-labs-campaign');
+  assert.ok(syneo);
+  const syneoItems = getProjectGalleryItems(syneo);
+  assert.equal(syneoItems.length, 1);
+  assert.equal(syneoItems[0].src, syneo.image);
 });
 
 test('getNextSlideIndex wraps forward, backward, and guards empty carousels', () => {
@@ -73,7 +99,7 @@ test('getNextSlideIndex wraps forward, backward, and guards empty carousels', ()
 test('getAdjacentProjectId cycles forward and backward cleanly', () => {
   assert.equal(
     getAdjacentProjectId(PORTFOLIO_PROJECTS, 'biodiagnostics-path-labs', 'next'),
-    'syneo-labs-campaign'
+    'elab-nepal-campaign'
   );
   assert.equal(
     getAdjacentProjectId(PORTFOLIO_PROJECTS, 'biodiagnostics-path-labs', 'prev'),

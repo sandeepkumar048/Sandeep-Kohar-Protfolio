@@ -3,6 +3,7 @@ import type {
   HighlightItem,
   PortfolioProject,
   ProjectCategory,
+  ProjectGalleryItem,
   ShowcaseTrack,
   TestimonialItem,
 } from '../data/portfolioData';
@@ -93,6 +94,21 @@ export function getAdjacentProjectId(
   const delta = direction === 'next' ? 1 : -1;
   const nextIndex = (currentIndex + delta + projects.length) % projects.length;
   return projects[nextIndex].id;
+}
+
+export function getProjectGalleryItems(
+  project: PortfolioProject
+): ProjectGalleryItem[] {
+  if (project.gallery && project.gallery.length > 0) {
+    return project.gallery;
+  }
+  return [
+    {
+      src: project.image,
+      alt: project.imageAlt,
+      label: project.title,
+    },
+  ];
 }
 
 export function paginateTestimonials(

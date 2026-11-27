@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { ArrowDownRight, ArrowUpRight, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+} from 'lucide-react';
 import {
   ABOUT_PORTRAIT_SRC,
   CAREER_HISTORY,
@@ -84,6 +93,32 @@ export function AboutSection() {
                 >
                   <Linkedin className="h-3.5 w-3.5 shrink-0 text-[#111111]" aria-hidden="true" />
                   <span>{PERSONAL_PROFILE.linkedinLabel}</span>
+                  <ArrowUpRight
+                    className="h-3.5 w-3.5 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    aria-hidden="true"
+                  />
+                </a>
+                <a
+                  href={PERSONAL_PROFILE.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2.5 font-medium text-[#111111] transition-colors hover:underline underline-offset-4"
+                >
+                  <Instagram className="h-3.5 w-3.5 shrink-0 text-[#111111]" aria-hidden="true" />
+                  <span>{PERSONAL_PROFILE.instagramLabel}</span>
+                  <ArrowUpRight
+                    className="h-3.5 w-3.5 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    aria-hidden="true"
+                  />
+                </a>
+                <a
+                  href={PERSONAL_PROFILE.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2.5 font-medium text-[#111111] transition-colors hover:underline underline-offset-4"
+                >
+                  <Facebook className="h-3.5 w-3.5 shrink-0 text-[#111111]" aria-hidden="true" />
+                  <span>{PERSONAL_PROFILE.facebookLabel}</span>
                   <ArrowUpRight
                     className="h-3.5 w-3.5 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                     aria-hidden="true"

@@ -12,6 +12,12 @@ export interface ProjectMetric {
   value: string;
 }
 
+export interface ProjectGalleryItem {
+  src: string;
+  alt: string;
+  label: string;
+}
+
 export interface PortfolioProject {
   id: string;
   title: string;
@@ -32,6 +38,7 @@ export interface PortfolioProject {
   image: string;
   imageAlt: string;
   imageCropClass?: string;
+  gallery?: ProjectGalleryItem[];
 }
 
 export interface CapabilityItem {
@@ -106,6 +113,10 @@ export interface PersonalProfile {
   email: string;
   linkedinUrl: string;
   linkedinLabel: string;
+  instagramUrl: string;
+  instagramLabel: string;
+  facebookUrl: string;
+  facebookLabel: string;
   currentLocation: string;
   hometown: string;
   aboutBio: string;
@@ -123,6 +134,11 @@ export const PERSONAL_PROFILE: PersonalProfile = {
   email: 'prajapatisandeepkumar78@gmail.com',
   linkedinUrl: 'https://www.linkedin.com/in/sandeepkohar/',
   linkedinLabel: 'linkedin.com/in/sandeepkohar',
+  instagramUrl:
+    'https://www.instagram.com/sandeepkumar_048?avpt=MXM0Nm42YXMwNmp4bw==',
+  instagramLabel: '@sandeepkumar_048',
+  facebookUrl: 'https://www.facebook.com/sandeepkumarprajapati78',
+  facebookLabel: 'facebook.com/sandeepkumarprajapati78',
   currentLocation: 'Kathmandu, Bagmati Province',
   hometown: 'Kapilvastu, Lumbini',
   aboutBio:
@@ -255,6 +271,67 @@ export const PORTFOLIO_PROJECTS: PortfolioProject[] = [
     imageAlt:
       'Biodiagnostics Path Labs reference laboratory website displaying Nepal Government Approved ISO 15189:2022 badge, Book Test and View Reports actions, Patient Portal, and modern clinical lab photography',
     imageCropClass: 'object-contain object-center bg-white',
+  },
+  {
+    id: 'elab-nepal-campaign',
+    title: 'eLab Nepal Campaign Suite',
+    client: 'eLab Nepal Pvt. Ltd.',
+    year: '2026',
+    showcase: 'graphics',
+    category: 'Brand Identity',
+    disciplines: ['Graphic Design', 'Healthcare Campaigns'],
+    formatSpec: '5-Piece Bilingual Campaign · Social · Mobile App & Home Care',
+    summary:
+      'Bilingual Nepali and English digital marketing and brand campaign suite for eLab Nepal Pvt. Ltd., highlighting free home sample collection, family lab care across all age groups, and the eLab mobile app experience.',
+    role: 'Graphic Designer',
+    timeline: 'Apr 2026 – Present',
+    challenge:
+      'eLab Nepal needed trustworthy, warm, and immediately scannable healthcare visuals across web banners, social feeds, and mobile app promotions that resonated with families across Kathmandu.',
+    solution:
+      'Built a cohesive clinical blue, amber-gold, and crisp white visual system pairing friendly family and phlebotomist photography with structured service iconography, Nepali-English headlines, and clear booking calls to action.',
+    deliverables: [
+      'Family Health Web Hero Banner (Nepali & English)',
+      'Smart Home Sample Collection Campaign Poster',
+      'In-Home Phlebotomist Service Ad',
+      'Full Lab Care 4-Segment Collage Poster',
+      'eLab Mobile App Feature Promo Graphic',
+    ],
+    metrics: [
+      { label: 'Campaign Plates', value: '5 Designs' },
+      { label: 'Languages', value: 'EN + NP' },
+      { label: 'Care Tracks', value: '4 Segments' },
+    ],
+    image: '/assets/aistudio/elab_web_65653572.jpg',
+    imageAlt:
+      'eLab Nepal family health promotional web banner reading Check Today Stay Healthy Tomorrow with Free Sample Collection, Accurate Reports, Fast Turnaround Time, and Experienced Medical Professionals',
+    imageCropClass: 'object-contain object-center bg-[#F5F7FA]',
+    gallery: [
+      {
+        src: '/assets/aistudio/elab_web_65653572.jpg',
+        alt: 'eLab Nepal bilingual family health banner with Lab Service at Home, four diagnostic highlights, and Kathmandu contact details',
+        label: 'Family Health Banner',
+      },
+      {
+        src: '/assets/aistudio/Health_Nw_78a9623d.jpg',
+        alt: 'eLab Nepal Smart Health Check-up campaign poster showcasing Free Home Sample Collection, hexagonal service visuals, and app store badges',
+        label: 'Smart Check-up Campaign',
+      },
+      {
+        src: '/assets/aistudio/e-lb_c0197248.png',
+        alt: 'eLab Nepal Sample Collection Made Easy poster showing in-home phlebotomist service, Safe and Hygienic highlights, and booking numbers',
+        label: 'Home Sample Collection',
+      },
+      {
+        src: '/assets/aistudio/care_7af41d08.jpg',
+        alt: 'eLab Nepal Full Lab Care Right at Home poster featuring Women Care, Corporate Care, Child Care, and Elder Care around the eLab logo',
+        label: 'Full Lab Care Poster',
+      },
+      {
+        src: '/assets/aistudio/Ready_wherever_17fa5dbb.png',
+        alt: 'eLab Nepal mobile app promotional design featuring smartphone UI for View Reports, Book Appointment, My Records, and Secure Private health tracking',
+        label: 'Mobile App Promo',
+      },
+    ],
   },
   {
     id: 'syneo-labs-campaign',

@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   ArrowUpRight,
-  Check,
-  Copy,
   Linkedin,
   LogOut,
   RefreshCw,
@@ -150,7 +148,6 @@ export function LinkedInPostsSection() {
   const [connecting, setConnecting] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
-  const [copiedUri, setCopiedUri] = useState(false);
 
   const loadFeed = useCallback(async (forceRefresh = false) => {
     if (forceRefresh) {
@@ -283,18 +280,6 @@ export function LinkedInPostsSection() {
       setActionNotice('Unable to disconnect LinkedIn session right now.');
     } finally {
       setDisconnecting(false);
-    }
-  };
-
-  const handleCopyCallbackUrl = async () => {
-    const uri = feed?.redirectUri;
-    if (!uri) return;
-    try {
-      await navigator.clipboard.writeText(uri);
-      setCopiedUri(true);
-      window.setTimeout(() => setCopiedUri(false), 2200);
-    } catch {
-      setActionNotice(`Copy this Authorized Redirect URL: ${uri}`);
     }
   };
 
@@ -467,140 +452,59 @@ export function LinkedInPostsSection() {
               </div>
             </div>
           ) : (
-            /* Editorial Live Feed Connection Panel (auth_required, not_configured, or error) */
-            <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
-              {/* Left Column: Authentic Profile Summary */}
-              <div className="flex flex-col justify-between rounded-[24px] border border-neutral-200/90 bg-[#FAFAFA] p-7 lg:col-span-5">
-                <div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#111111] text-[#D9FA7A]">
-                      <Linkedin className="h-5 w-5" aria-hidden="true" />
-                    </span>
-                    <span className="text-[12px] font-medium text-[#666666]">
-                      Live API Sync · Top 3 Posts
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 font-sans text-[22px] font-semibold tracking-[-0.02em] text-[#111111]">
-                    {PERSONAL_PROFILE.name}
-                  </h3>
-                  <p className="mt-1 text-[13.5px] text-[#525252]">
-                    {PERSONAL_PROFILE.title} · {PERSONAL_PROFILE.currentLocation}
-                  </p>
-                  <p className="mt-4 text-[14px] leading-[1.65] text-[#404040]">
-                    {feed?.status === 'error'
-                      ? feed.message
-                      : feed?.status === 'auth_required'
-                        ? 'LinkedIn OAuth is ready on the server. Authorize your LinkedIn account to pull your latest 3 posts directly into this portfolio.'
-                        : 'This section connects directly to LinkedIn via server-side OAuth 2.0 or an HTTPS post feed — never hardcoded placeholder posts.'}
-                  </p>
-                </div>
-
-                <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-neutral-200/80 pt-5">
-                  {feed?.oauthConfigured ? (
-                    <button
-                      type="button"
-                      onClick={handleConnectLinkedIn}
-                      disabled={connecting}
-                      className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full bg-[#111111] px-5 py-2 text-[13.5px] font-medium text-white whitespace-nowrap shrink-0 transition-colors hover:bg-[#262626] disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] cursor-pointer"
-                    >
-                      <Linkedin className="h-4 w-4 text-[#D9FA7A]" aria-hidden="true" />
-                      <span>
-                        {connecting ? 'Connecting…' : 'Connect LinkedIn Account'}
-                      </span>
-                    </button>
-                  ) : (
-                    <a
-                      href={profileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full bg-[#111111] px-5 py-2 text-[13.5px] font-medium text-white whitespace-nowrap shrink-0 transition-colors hover:bg-[#262626] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                    >
-                      <span>Visit LinkedIn Profile</span>
-                      <ArrowUpRight className="h-4 w-4 text-[#D9FA7A]" aria-hidden="true" />
-                    </a>
-                  )}
-
-                  <span className="text-[12.5px] font-medium text-[#666666]">
-                    {PERSONAL_PROFILE.linkedinLabel}
-                  </span>
-                </div>
+            /* Clean Centered LinkedIn Profile Card (auth_required, not_configured, or error) */
+            <div className="mx-auto max-w-[640px] rounded-[24px] border border-neutral-200/90 bg-[#FAFAFA] p-7 sm:p-8">
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#111111] text-[#D9FA7A]">
+                  <Linkedin className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span className="text-[12px] font-medium text-[#666666]">
+                  LinkedIn Profile · Top 3 Posts
+                </span>
               </div>
 
-              {/* Right Column: Clean 3-Step Server Sync Guide */}
-              <div className="flex flex-col justify-between rounded-[24px] border border-neutral-200/90 bg-white p-7 lg:col-span-7">
-                <div>
-                  <p className="text-[12.5px] font-medium text-[#666666]">
-                    Real-Time LinkedIn Feed Setup
-                  </p>
-                  <h3 className="mt-1.5 font-sans text-[20px] font-semibold tracking-[-0.02em] text-[#111111]">
-                    Enable Live 3-Post Sync
-                  </h3>
+              <h3 className="mt-5 font-sans text-[22px] font-semibold tracking-[-0.02em] text-[#111111]">
+                {PERSONAL_PROFILE.name}
+              </h3>
+              <p className="mt-1 text-[13.5px] text-[#525252]">
+                {PERSONAL_PROFILE.title} · {PERSONAL_PROFILE.currentLocation}
+              </p>
+              <p className="mt-4 text-[14px] leading-[1.65] text-[#404040]">
+                {feed?.status === 'error'
+                  ? feed.message
+                  : feed?.status === 'auth_required'
+                    ? 'Authorize your LinkedIn account to load your latest 3 posts directly into this section.'
+                    : 'Follow Sandeep Kohar on LinkedIn for recent web development launches, graphic design campaigns, and engineering community updates.'}
+              </p>
 
-                  <ol className="mt-5 divide-y divide-neutral-100">
-                    <li className="flex items-start gap-3.5 py-3.5 first:pt-0">
-                      <span className="font-serif italic text-[17px] leading-snug text-[#737373] tabular-nums">
-                        01
-                      </span>
-                      <div>
-                        <p className="text-[14px] font-semibold text-[#111111]">
-                          Option A — LinkedIn OAuth 2.0 App
-                        </p>
-                        <p className="mt-0.5 text-[13px] leading-[1.6] text-[#525252]">
-                          Create an app in LinkedIn Developer Portal, register the callback URL
-                          below, and add <code className="font-mono text-[12px] text-[#111111]">LINKEDIN_CLIENT_ID</code> and{' '}
-                          <code className="font-mono text-[12px] text-[#111111]">LINKEDIN_CLIENT_SECRET</code> in environment secrets.
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-3.5 py-3.5">
-                      <span className="font-serif italic text-[17px] leading-snug text-[#737373] tabular-nums">
-                        02
-                      </span>
-                      <div>
-                        <p className="text-[14px] font-semibold text-[#111111]">
-                          Option B — Public Visitor Auto-Sync
-                        </p>
-                        <p className="mt-0.5 text-[13px] leading-[1.6] text-[#525252]">
-                          Set <code className="font-mono text-[12px] text-[#111111]">LINKEDIN_ACCESS_TOKEN</code> or a public HTTPS RSS/JSON feed URL in{' '}
-                          <code className="font-mono text-[12px] text-[#111111]">LINKEDIN_FEED_URL</code> so every visitor sees your latest 3 posts automatically.
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-3.5 py-3.5 last:pb-0">
-                      <span className="font-serif italic text-[17px] leading-snug text-[#737373] tabular-nums">
-                        03
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[14px] font-semibold text-[#111111]">
-                          Authorized Redirect URL
-                        </p>
-                        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-neutral-200 bg-[#FAFAFA] px-3.5 py-2">
-                          <code className="truncate font-mono text-[12px] text-[#262626]">
-                            {feed?.redirectUri ?? '/auth/linkedin/callback'}
-                          </code>
-                          <button
-                            type="button"
-                            onClick={() => void handleCopyCallbackUrl()}
-                            className="inline-flex min-h-[34px] items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1 text-[12px] font-medium text-[#111111] whitespace-nowrap shrink-0 transition-colors hover:border-[#111111] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] cursor-pointer"
-                          >
-                            {copiedUri ? (
-                              <>
-                                <Check className="h-3.5 w-3.5 text-[#65A30D]" aria-hidden="true" />
-                                <span>Copied</span>
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                                <span>Copy URL</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                  </ol>
-                </div>
+              <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200/80 pt-5">
+                {feed?.oauthConfigured ? (
+                  <button
+                    type="button"
+                    onClick={handleConnectLinkedIn}
+                    disabled={connecting}
+                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full bg-[#111111] px-5 py-2 text-[13.5px] font-medium text-white whitespace-nowrap shrink-0 transition-colors hover:bg-[#262626] disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] cursor-pointer"
+                  >
+                    <Linkedin className="h-4 w-4 text-[#D9FA7A]" aria-hidden="true" />
+                    <span>
+                      {connecting ? 'Connecting…' : 'Connect LinkedIn Account'}
+                    </span>
+                  </button>
+                ) : (
+                  <a
+                    href={profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full bg-[#111111] px-5 py-2 text-[13.5px] font-medium text-white whitespace-nowrap shrink-0 transition-colors hover:bg-[#262626] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+                  >
+                    <span>Visit LinkedIn Profile</span>
+                    <ArrowUpRight className="h-4 w-4 text-[#D9FA7A]" aria-hidden="true" />
+                  </a>
+                )}
+
+                <span className="text-[12.5px] font-medium text-[#666666]">
+                  {PERSONAL_PROFILE.linkedinLabel}
+                </span>
               </div>
             </div>
           )}
